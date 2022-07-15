@@ -1,35 +1,27 @@
- # $Id$
-# Maintainer: TheKit <nekit1000 at gmail.com>
+# $Id$
+# Contributor: TheKit <nekit1000 at gmail.com>
+# Contributor: Alexey Andreyev <aa13q@ya.ru>
 # Maintainer: James Kittsmiller (AJSlye) <james@nulogicsystems.com>
 
-pkgname=sailfish-access-control-qt5-git
-_pkgname=sailfish-access-control
-pkgver=0.0.5.r0.gf858fed
+pkgname=sailfish-access-control
+pkgver=0.0.6
 pkgrel=1
-pkgdesc="Sailfish Access Control QML plugin"
+pkgdesc="Sailfish Access Control library"
 arch=('x86_64' 'aarch64')
 url="https://github.com/sailfishos/sailfish-access-control"
 license=('GPL')
-depends=('qt5-declarative' 'sailfish-access-control')
-makedepends=('git')
-provides=("${pkgname%-git}")
-conflicts=("${pkgname%-git}")
-source=("${pkgname%-git}::git+${url}")
-md5sums=('SKIP')
-
-pkgver() {
-	cd "$srcdir/${pkgname%-git}"
-	git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
-}
+depends=('glib2')
+source=("${url}/archive/refs/tags/$pkgver.tar.gz")
+sha256sums=('3abb5eff483c308abafa856599f079e08daccf71d13e451c9acbd4ff395a522b')
 
 build() {
-	cd "$srcdir/${pkgname%-git}"
-	qmake PREFIX=/usr
-	make
+	cd $pkgname-$pkgver/glib
+	make LIBDIR=/usr/lib ROOT="$pkgdir/" VERSION=${pkgver}
+	make LIBDIR=/usr/lib ROOT="$pkgdir/" VERSION=${pkgver} sailfishaccesscontrol.pc
 }
 
 package() {
-	cd "$srcdir/${pkgname%-git}"
-	make -j 1 INSTALL_ROOT="$pkgdir/" install
+	cd $pkgname-$pkgver/glib
+	make ROOT="$pkgdir/" install-libsailfishaccesscontrol
+	make ROOT="$pkgdir/" install-libsailfishaccesscontrol-dev
 }
-
